@@ -27,7 +27,7 @@ When generating suggestions:
 
 ## Monorepo Workflow
 
-- Build frequently: `npm run build --workspace=api` or `--workspace=frontend` (root build runs both)
+- Build frequently: `make dev` (root build runs both)
 
 - Keep PRs scoped: code + tests + docs (architecture or build notes) when behavior changes.
 - Update related instruction files if new folders or architectural slices are introduced.
