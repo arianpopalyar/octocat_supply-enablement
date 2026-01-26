@@ -1,4 +1,4 @@
-## Use Case 3: "Enforce team standards and make Copilot understand them. Also, delegate tasks to Coding Agent"
+## Use Case 3: "Enforce team standards and make Copilot understand them. Also, delegate tasks to a custom Agent"
 
 ### **Scenario 1:**  Your company uses an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
 
@@ -56,16 +56,12 @@ TAO is a fictitious observability framework for this workshop.  You can read abo
 
 Sometimes you need to pass context to a teammate, a new chat session, or an agent.  Custom prompts can help with this.  Lets create a plan and then use a **handoff** to generate a summary document.
 
-1. Clear chat, switch to `Plan` mode.  Again, consider switching to the latest Gemini model for planning use cases.
-2. Prompt:
+1. Clear chat, switch to `Plan` mode.  Consider switching to the latest  model for planning use cases.
+2. Run the handoff command with the below prompt:
    ```text
-   Create a plan for a user profile page with edit capability and picture upload
+   /handoff Create a plan for a user profile page with edit capability and picture upload
    ```
-3. Run the handoff command:
-   ```text
-   /handoff
-   ```
-4. Review generated `handoff.md` - contains:
+31. Review generated `handoff.md` - contains:
    - Requirements summary
    - Implementation plan
    - Key decisions/assumptions
@@ -80,23 +76,21 @@ The steps are just defined in `.github/prompts/handoff.prompt.md`.  You can of c
 ✅ **Handoff Files** - Transfer context between sessions, developers, or agents
 
 ----
-### **Scenario 2:** Delegate tasks to Coding Agent
-**Your Challenge:**  Delegate work to Coding Agent while you focus on other high-value tasks.
+### **Scenario 2:** Delegate tasks to custom agent
+**Your Challenge:**  Delegate work to a custom agent while you focus on other high-value tasks.
 
 #### Step 1: Use Custom Agents for Specialized Work
 
 **Scenario:** You need BDD tests for the cart feature.
 
-1. Go to your copy of the octocatSupply GitHub repository
-2. Click **Agents Panel** (Cloud icon on top right next to Copilot...)
-3. Select the main branch for working (should be preselected)
-4. Choose **BDD Specialist** agent
-5. Prompt:
+1. Open a new chat session
+2. Choose the **BDD Specialist** agent
+3. Run with the following prompt:
    ```text
    Add comprehensive BDD tests for the Cart page feature
    ```
-6. Click the **Start Task** button
-7. Agent starts working - **you can close the tab and do other work**
+
+4. Agent starts working.
 
 > If interested, you can look at `.github/agents/bdd-specialist.agent.md` to see how this custom agent is defined.  You can create your own custom agents for your team as well!
 
