@@ -1,4 +1,8 @@
 ## Week 2: Use Copilot to build a new feature and improve test coverage
+
+### Pre-requisite:
+Use the [repo template](https://github.com/new?template_name=octocat_supply_ghcp_enablement&template_owner=Puneet-Minhas) to create a new repo in your personal GitHub Account and either work on it locally or in a Codespace.
+
 ### **Scenario:** *"We need a shopping cart. Users should be able to add products, see a count in the nav bar, and view their cart on a dedicated page."*
 
 **Your Challenge:** Build this feature end-to-end, matching a provided design.
