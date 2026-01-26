@@ -100,11 +100,11 @@ cd api && npm run db:seed     # Seed data only
 ## 🤖 Challenges
 This project is designed to showcase GitHub Copilot's capabilities. As such, it includes a series of challenges for you to try out:
 
-| Title | Details | Copilot Features |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Title | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Details | Copilot Features |
 |-------|---------|------------------|
 | [Week 1](/docs/challenges/week1.md) | GitHub Copilot overview | Introduction to GitHub Copilot, and Prompt Engineering |
 | [Week 2](/docs/challenges/week2.md) | Use Copilot to build a new feature and improve test coverage | Plan mode, Agent mode, Vision, Prompt Files |
-
+| [Week 3](/docs/challenges/week3.md) | Enforce team standards and delegate tasks to the custom Agent | Custom Instructions, Custom Agent  |
 ---
 
 
