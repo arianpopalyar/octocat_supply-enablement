@@ -2,9 +2,15 @@
  * Database migration runner
  */
 
-import fs from 'fs';
-import path from 'path';
-import { getDatabase, DatabaseConnection } from './sqlite';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { getDatabase, DatabaseConnection } from "./sqlite";
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 interface Migration {
   version: number;
@@ -16,7 +22,10 @@ export class MigrationRunner {
   private db: DatabaseConnection;
   private migrationsDir: string;
 
-  constructor(db: DatabaseConnection, migrationsDir: string = './database/migrations') {
+  constructor(
+    db: DatabaseConnection,
+    migrationsDir: string = "./database/migrations",
+  ) {
     this.db = db;
     this.migrationsDir = path.resolve(migrationsDir);
   }
@@ -46,13 +55,13 @@ export class MigrationRunner {
 
     const files = fs
       .readdirSync(this.migrationsDir)
-      .filter((file) => file.endsWith('.sql'))
+      .filter((file) => file.endsWith(".sql"))
       .sort();
 
     return files.map((filename) => {
       const version = this.extractVersionFromFilename(filename);
       const filePath = path.join(this.migrationsDir, filename);
-      const sql = fs.readFileSync(filePath, 'utf-8');
+      const sql = fs.readFileSync(filePath, "utf-8");
 
       return {
         version,
@@ -81,7 +90,7 @@ export class MigrationRunner {
    */
   private async getAppliedMigrations(): Promise<number[]> {
     const rows = await this.db.all<{ version: number }>(
-      'SELECT version FROM migrations ORDER BY version',
+      "SELECT version FROM migrations ORDER BY version",
     );
     return rows.map((row) => row.version);
   }
@@ -90,12 +99,14 @@ export class MigrationRunner {
    * Apply a single migration
    */
   private async applyMigration(migration: Migration): Promise<void> {
-    console.log(`Applying migration ${migration.version}: ${migration.filename}`);
+    console.log(
+      `Applying migration ${migration.version}: ${migration.filename}`,
+    );
 
     try {
       // Split SQL into individual statements and execute each
       const statements = migration.sql
-        .split(';')
+        .split(";")
         .map((stmt) => stmt.trim())
         .filter((stmt) => stmt.length > 0);
 
@@ -106,14 +117,16 @@ export class MigrationRunner {
       }
 
       // Record the migration as applied
-      await this.db.run('INSERT INTO migrations (version, filename) VALUES (?, ?)', [
-        migration.version,
-        migration.filename,
-      ]);
+      await this.db.run(
+        "INSERT INTO migrations (version, filename) VALUES (?, ?)",
+        [migration.version, migration.filename],
+      );
 
       console.log(`✅ Migration ${migration.version} applied successfully`);
     } catch (error) {
-      console.error(`❌ Failed to apply migration ${migration.version}: ${error}`);
+      console.error(
+        `❌ Failed to apply migration ${migration.version}: ${error}`,
+      );
       throw error;
     }
   }
@@ -122,7 +135,7 @@ export class MigrationRunner {
    * Run all pending migrations
    */
   public async runMigrations(): Promise<void> {
-    console.log('🚀 Starting database migration...');
+    console.log("🚀 Starting database migration...");
 
     try {
       // Initialize migrations table
@@ -138,7 +151,7 @@ export class MigrationRunner {
       );
 
       if (pendingMigrations.length === 0) {
-        console.log('✅ No pending migrations. Database is up to date.');
+        console.log("✅ No pending migrations. Database is up to date.");
         return;
       }
 
@@ -149,9 +162,9 @@ export class MigrationRunner {
         await this.applyMigration(migration);
       }
 
-      console.log('🎉 All migrations completed successfully!');
+      console.log("🎉 All migrations completed successfully!");
     } catch (error) {
-      console.error('💥 Migration failed:', error);
+      console.error("💥 Migration failed:", error);
       throw error;
     }
   }
@@ -163,7 +176,7 @@ export class MigrationRunner {
     await this.initializeMigrationsTable();
 
     const result = await this.db.get<{ version: number }>(
-      'SELECT MAX(version) as version FROM migrations',
+      "SELECT MAX(version) as version FROM migrations",
     );
 
     return result?.version || 0;
@@ -175,7 +188,7 @@ export class MigrationRunner {
  */
 export async function runMigrations(isTest: boolean = false): Promise<void> {
   const db = await getDatabase(isTest);
-  const migrationsDir = path.join(__dirname, '../../database/migrations');
+  const migrationsDir = path.join(__dirname, "../../database/migrations");
   const runner = new MigrationRunner(db, migrationsDir);
 
   await runner.runMigrations();

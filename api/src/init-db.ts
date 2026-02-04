@@ -3,12 +3,12 @@
  * This script runs migrations and optionally seeds the database
  */
 
-import { runMigrations } from './db/migrate';
-import { seedDatabase } from './db/seed';
-import { closeDatabase } from './db/sqlite';
+import { runMigrations } from "./db/migrate";
+import { seedDatabase } from "./db/seed";
+import { closeDatabase } from "./db/sqlite";
 
 async function initializeDatabase(shouldSeed: boolean = true): Promise<void> {
-  console.log('🚀 Initializing database...');
+  console.log("🚀 Initializing database...");
 
   try {
     // Run migrations
@@ -19,26 +19,27 @@ async function initializeDatabase(shouldSeed: boolean = true): Promise<void> {
       await seedDatabase();
     }
 
-    console.log('✅ Database initialization complete!');
+    console.log("✅ Database initialization complete!");
   } catch (error) {
-    console.error('❌ Database initialization failed:', error);
+    console.error("❌ Database initialization failed:", error);
     throw error;
   } finally {
     await closeDatabase();
   }
 }
 
-// Run if called directly
-if (require.main === module) {
-  const shouldSeed = process.argv.includes('--seed') || process.argv.includes('-s');
+// Run if called directly (ES module equivalent of require.main === module)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const shouldSeed =
+    process.argv.includes("--seed") || process.argv.includes("-s");
 
   initializeDatabase(shouldSeed)
     .then(() => {
-      console.log('Database initialization completed successfully');
+      console.log("Database initialization completed successfully");
       process.exit(0);
     })
     .catch((error) => {
-      console.error('Database initialization failed:', error);
+      console.error("Database initialization failed:", error);
       process.exit(1);
     });
 }

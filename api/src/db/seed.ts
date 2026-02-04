@@ -2,15 +2,21 @@
  * Database seeder for populating initial data
  */
 
-import fs from 'fs';
-import path from 'path';
-import { getDatabase, DatabaseConnection } from './sqlite';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { getDatabase, DatabaseConnection } from "./sqlite";
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export class DatabaseSeeder {
   private db: DatabaseConnection;
   private seedsDir: string;
 
-  constructor(db: DatabaseConnection, seedsDir: string = './database/seed') {
+  constructor(db: DatabaseConnection, seedsDir: string = "./database/seed") {
     this.db = db;
     this.seedsDir = path.resolve(seedsDir);
   }
@@ -22,7 +28,7 @@ export class DatabaseSeeder {
     try {
       // Check if any suppliers exist (assuming suppliers are seeded first)
       const result = await this.db.get<{ count: number }>(
-        'SELECT COUNT(*) as count FROM suppliers',
+        "SELECT COUNT(*) as count FROM suppliers",
       );
       return (result?.count || 0) > 0;
     } catch {
@@ -36,13 +42,15 @@ export class DatabaseSeeder {
    */
   private getSeedFiles(): string[] {
     if (!fs.existsSync(this.seedsDir)) {
-      console.log(`Seeds directory not found: ${this.seedsDir}. Skipping seeding.`);
+      console.log(
+        `Seeds directory not found: ${this.seedsDir}. Skipping seeding.`,
+      );
       return [];
     }
 
     return fs
       .readdirSync(this.seedsDir)
-      .filter((file) => file.endsWith('.sql'))
+      .filter((file) => file.endsWith(".sql"))
       .sort(); // Ensure predictable order
   }
 
@@ -51,14 +59,14 @@ export class DatabaseSeeder {
    */
   private async executeSeedFile(filename: string): Promise<void> {
     const filePath = path.join(this.seedsDir, filename);
-    const sql = fs.readFileSync(filePath, 'utf-8');
+    const sql = fs.readFileSync(filePath, "utf-8");
 
     console.log(`🌱 Seeding from: ${filename}`);
 
     try {
       // Split SQL into individual statements and execute each
       const statements = sql
-        .split(';')
+        .split(";")
         .map((stmt) => stmt.trim())
         .filter((stmt) => stmt.length > 0);
 
@@ -79,12 +87,12 @@ export class DatabaseSeeder {
    * Seed the database with initial data
    */
   public async seedDatabase(force: boolean = false): Promise<void> {
-    console.log('🌱 Starting database seeding...');
+    console.log("🌱 Starting database seeding...");
 
     try {
       // Check if already seeded
       if (!force && (await this.isSeeded())) {
-        console.log('✅ Database already seeded. Use force=true to re-seed.');
+        console.log("✅ Database already seeded. Use force=true to re-seed.");
         return;
       }
 
@@ -92,7 +100,7 @@ export class DatabaseSeeder {
       const seedFiles = this.getSeedFiles();
 
       if (seedFiles.length === 0) {
-        console.log('📝 No seed files found. Skipping seeding.');
+        console.log("📝 No seed files found. Skipping seeding.");
         return;
       }
 
@@ -103,9 +111,9 @@ export class DatabaseSeeder {
         await this.executeSeedFile(filename);
       }
 
-      console.log('🎉 Database seeding completed successfully!');
+      console.log("🎉 Database seeding completed successfully!");
     } catch (error) {
-      console.error('💥 Seeding failed:', error);
+      console.error("💥 Seeding failed:", error);
       throw error;
     }
   }
@@ -114,7 +122,7 @@ export class DatabaseSeeder {
    * Clear all data from the database (useful for re-seeding)
    */
   public async clearDatabase(): Promise<void> {
-    console.log('🧹 Clearing database...');
+    console.log("🧹 Clearing database...");
 
     try {
       // Get all table names
@@ -123,7 +131,7 @@ export class DatabaseSeeder {
       );
 
       // Disable foreign key constraints temporarily
-      await this.db.run('PRAGMA foreign_keys = OFF');
+      await this.db.run("PRAGMA foreign_keys = OFF");
 
       // Clear all tables
       for (const table of tables) {
@@ -132,11 +140,11 @@ export class DatabaseSeeder {
       }
 
       // Re-enable foreign key constraints
-      await this.db.run('PRAGMA foreign_keys = ON');
+      await this.db.run("PRAGMA foreign_keys = ON");
 
-      console.log('✅ Database cleared successfully');
+      console.log("✅ Database cleared successfully");
     } catch (error) {
-      console.error('❌ Failed to clear database:', error);
+      console.error("❌ Failed to clear database:", error);
       throw error;
     }
   }
@@ -145,9 +153,12 @@ export class DatabaseSeeder {
 /**
  * Seed the database using the global database connection
  */
-export async function seedDatabase(force: boolean = false, isTest: boolean = false): Promise<void> {
+export async function seedDatabase(
+  force: boolean = false,
+  isTest: boolean = false,
+): Promise<void> {
   const db = await getDatabase(isTest);
-  const seedsDir = path.join(__dirname, '../../database/seed');
+  const seedsDir = path.join(__dirname, "../../database/seed");
   const seeder = new DatabaseSeeder(db, seedsDir);
 
   await seeder.seedDatabase(force);
@@ -158,7 +169,7 @@ export async function seedDatabase(force: boolean = false, isTest: boolean = fal
  */
 export async function reseedDatabase(isTest: boolean = false): Promise<void> {
   const db = await getDatabase(isTest);
-  const seedsDir = path.join(__dirname, '../../database/seed');
+  const seedsDir = path.join(__dirname, "../../database/seed");
   const seeder = new DatabaseSeeder(db, seedsDir);
 
   await seeder.clearDatabase();
