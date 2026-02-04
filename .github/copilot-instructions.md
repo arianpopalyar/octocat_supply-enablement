@@ -5,6 +5,7 @@ These are repository-wide guidelines. Path‑scoped files in `.github/instructio
 ## High-Level Architecture
 
 TypeScript monorepo with:
+
 - `api/` Express REST API (SQLite persistence, repository pattern, Swagger docs)
 
 - `frontend/` React + Vite + Tailwind UI
@@ -13,7 +14,9 @@ TypeScript monorepo with:
 Refer to `docs/architecture.md` and `docs/sqlite-integration.md` for deeper details. Avoid restating them in reviews and link instead.
 
 ## General Review Guidance
+
 When generating suggestions:
+
 1. Prefer incremental, minimal diffs; preserve existing style and naming.
 2. Surface security, correctness, and data integrity issues before micro-optimizations.
 
@@ -33,9 +36,11 @@ When generating suggestions:
 - Update related instruction files if new folders or architectural slices are introduced.
 
 ## Do Not Repeat
+
 Do not inline full API route or component files in review feedback unless absolutely necessary: quote only the lines requiring change. Summarize low‑impact nits.
 
 ## Escalation Order for Suggestions
+
 1. Security / data integrity
 2. Logical / functional correctness
 3. Performance / scalability
@@ -44,7 +49,19 @@ Do not inline full API route or component files in review feedback unless absolu
 6. Style / minor formatting
 
 ## Tone & Feedback Style
+
 Be concise, actionable, and cite a rationale ("because" clause) for non-trivial recommendations. Offer one preferred solution; optionally a lightweight alternative.
 
+## REST API Guidelines
+
+For all REST API endpoints:
+
+- Use descriptive naming following RESTful conventions
+- Add Swagger/OpenAPI documentation
+- Implement TAO observability (logging, metrics, tracing)
+  - Assume TAO package is already installed
+  - Follow patterns in existing routes
+
 ---
+
 If new subsystems are added (e.g., `mobile/`, `worker/`), create a new `*.instructions.md` with `applyTo` globs instead of bloating this file.
